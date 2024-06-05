@@ -17,7 +17,7 @@
 
     // Initialize an empty string to store the HTML output
     $output = "";
-
+    
     // Check if there are any rows returned by the query
     if(mysqli_num_rows($result) > 0){
         // Start building the HTML table
@@ -27,6 +27,7 @@
                 <td>Name</td>
                 <td>Email</td>
                 <td>Country</td>
+                <td>DELETE</td>
             </tr>
         ";
 
@@ -38,6 +39,8 @@
                 <td>{$row['name']}</td>
                 <td>{$row['email']}</td>
                 <td>{$row['country']}</td>
+                <td ><button class='edit-btn' data-eid='{$row['id']}'>Edit</button></td>
+                <td ><button class='delete-btn' data-id='{$row['id']}'>Delete</button></td>
             </tr>";
         }
 

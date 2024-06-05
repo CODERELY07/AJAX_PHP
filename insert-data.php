@@ -25,6 +25,34 @@
         #success-message {
             background-color: green;
         }
+        #modal{
+            background:rgba(0,0,0,0.7);
+            position:fixed;
+            top:0;
+            left:0;
+            height: 100%;
+            width: 100%;
+            display:none;
+        }
+        #modal-form{
+            background:#fff;
+            width: 30%;
+            padding:15px;
+            position: relative;
+            margin:0 auto;
+            border-radius:4px;
+            top:20%;
+        }
+        #close-btn{
+            position: absolute;
+            top:20px;
+            right:20px;
+            font-size:30px;
+            padding:4px 10px;
+            cursor:pointer;
+            border:1px solid grey;
+            color:grey;
+        }
     </style>
 </head>
 <body>
@@ -34,7 +62,7 @@
             <!-- Header row -->
             <td id="header">
                 <!-- Page title -->
-                <h1>Php With Ajax</h1> <!-- Corrected spelling: "Ajax" -->
+                <h1>PHP With Ajax</h1> <!-- Corrected spelling: "PHP" -->
             </td>
         </tr>
         <tr>
@@ -58,6 +86,18 @@
     <div id="error-message" class="message"></div>
     <!-- Success message display area -->
     <div id="success-message" class="message"></div>
+
+    <div id="modal">
+        <div id="modal-form">
+            <h2>Edit Data</h2>
+            <table>
+            
+            </table>
+
+            <span id="close-btn">&times;</span>
+        </div>
+    </div>
+
     <!-- jQuery library -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
@@ -111,6 +151,70 @@
                         }
                     })
                 }
+            })
+
+            // Event handler for record deletion
+            $(document).on("click", ".delete-btn", function(){
+                if(confirm("Do you really want to delete?")){   
+                    var studentId = $(this).data("id");
+                    var element = this;
+                    $.ajax({
+                        url:"ajax-delete.php",
+                        type:"POST",
+                        data:{id: studentId},
+                        success: function(data){
+                            if(data == 1){
+                                $(element).closest("tr").fadeOut(); // Fade out the deleted record row
+                            }else{
+                                $("#error-message").html("Can't Delete Record").slideDown(); // Display error message
+                                $("#success-message").slideUp(); // Hide success message
+                            }
+                        }
+                    });
+                }
+            })
+
+            //show modal
+            $(document).on("click", ".edit-btn", function(){
+                $('#modal').show();
+                var studentId = $(this).data("eid");
+                
+                $.ajax({
+                    url: "load-update-form.php",
+                    type: "POST",
+                    data:{id:studentId},
+                    success: function (data){
+                        $("#modal-form table").html(data);
+                    }
+                })
+            });
+
+            //hide modal box
+            $('#close-btn').on("click", function(e){
+                $('#modal').hide();
+            });
+
+            //save update form
+            $(document).on("click", "#edit-submit",function(){
+                var stuId = $('#edit-id').val();
+                var name = $('#edit-name').val();
+                var email = $('#edit-email').val();
+                var country = $('#edit-country').val();
+                
+              
+                $.ajax({
+                    url: "ajax-update-form.php",
+                    type: "POST",
+                    data: {id: stuId, stu_name:name, stu_email:email, stu_country:country},
+                    success: function(data){
+                        if(data == 1){
+                            $('#modal').hide();
+                            loadTable();
+                            
+                        }
+
+                    }
+                })
             })
         })
     </script>
