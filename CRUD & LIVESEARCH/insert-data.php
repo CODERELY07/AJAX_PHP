@@ -63,6 +63,10 @@
             <td id="header">
                 <!-- Page title -->
                 <h1>PHP With Ajax</h1> <!-- Corrected spelling: "PHP" -->
+                <div id="search-bar">
+                    <label>Search :</label>
+                    <input type="text" autocomplete="off" id="search">
+                </div>
             </td>
         </tr>
         <tr>
@@ -215,7 +219,21 @@
 
                     }
                 })
-            })
+            });
+
+            // Live Search
+            $('#search').on("keyup", function(){
+                var search_term = $(this).val();
+                
+                $.ajax({
+                    url: "ajax-live-search.php",
+                    type: "post",
+                    data: {search: search_term},
+                    success: function(data){
+                        $('#table-data').html(data);
+                    }
+                })
+            });
         })
     </script>
 </body>
